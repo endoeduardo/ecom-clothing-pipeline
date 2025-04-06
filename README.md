@@ -14,6 +14,25 @@ So far, I’ve learned the following:
 - How to design and implement a web scraping process and architecture  
 - How to set up Docker environments to run the project
 
+## Installation
+To set up the scraper environment follow the next instructions
+1. Pip intall the dependecies
+```shell
+# Activate virtual environment
+source venv/bin/activate # For Unix OS
+venv/Scripts/activate # For Windows OS
+
+pip install -r scraper_requirements.txt
+```
+
+2. Install the playwright browsers
+```shell
+playwright install
+
+# For installing specific browsers
+playwright install chromium firefox
+```
+
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
