@@ -1,6 +1,4 @@
 """Harpie Crawler"""
-import re
-
 import scrapy
 from scrapy.spiders import CrawlSpider
 from scrapy.http import Response
@@ -13,10 +11,14 @@ class HarpieSpider(CrawlSpider):
     # allowed_domains = ["https://www.harpie.com.br/"]
     # start_urls = ["https://www.harpie.com.br/"]
     BASE_URL = "https://www.harpie.com.br/"
+    def __init__(self, timestamp=None, job_id=None):
+        super().__init__()
+        self.timestamp = timestamp
+        self.job_id = job_id
 
     def start_requests(self):
         # start_urls = ["https://www.harpie.com.br/"]
-        
+
         yield scrapy.Request(
             self.BASE_URL,
             meta={
@@ -28,11 +30,12 @@ class HarpieSpider(CrawlSpider):
             },
             callback=self.parse
         )
-    
+
     def parse(self, response: Response):
         """Extract and follow main links"""
         links = response.xpath(".//ul[@id='nav-root']/li//a/@href").getall()
-        
+
+        links = links[0:2] # Testing purposes comment before going prod
         for link in links:
             yield scrapy.Request(
                 url=response.urljoin(link),
@@ -74,11 +77,27 @@ class HarpieSpider(CrawlSpider):
                         ]
                     }
                 )
-    
+    def extract_category(self, response: Response):
+        """Extract and returns the category queried"""
+        try:
+            if response.request.url is not None and isinstance(response.request.url, str):
+                category = response.request.url
+                category = category.split("/")
+                category = category[-1]
+                return category
+            return None
+        except:
+            return None
+            
     def parse_item(self, response: Response):
         """Parse the product item and returns a JSON with the parsing data"""
         yield {
+            "timestamp": self.timestamp,
+            "job_id": self.job_id,
             "product_name": response.xpath(".//h1/text()").get(),
+            "internal_id": response.xpath(".//div[@class='codi%go-prod']/text()").get(),
             "pix_price": response.xpath(".//div[@class='preco-pix']/strong/text()").get(),
-            "gender": response.xpath(".//dt[contains(text(), 'Gênero')]/following-sibling::dd/text()").get()
+            "gender": response.xpath(".//dt[contains(text(), 'Gênero')]/following-sibling::dd/text()").get(),
+            "color": response.xpath(".//dt[contains(text(), 'Cor')]/following-sibling::dd/text()").get(),
+            "category": self.extract_category(response)
         }
