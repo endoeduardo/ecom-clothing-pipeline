@@ -31,7 +31,7 @@ class BluhenCrawler(CrawlSpider):
         """Extract and follow main links"""
         links = response.xpath(".//ul[@id='nav-root']/li//a/@href").getall()
 
-        links = links[0:2] # Testing purposes comment before going prod
+        # links = links[0:2] # Testing purposes comment before going prod
         for link in links:
             yield scrapy.Request(
                 url=response.urljoin(link),

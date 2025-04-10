@@ -35,7 +35,7 @@ class HarpieSpider(CrawlSpider):
         """Extract and follow main links"""
         links = response.xpath(".//ul[@id='nav-root']/li//a/@href").getall()
 
-        # links = links[0:2] # Testing purposes comment before going prod
+        # links = links[4] # Testing purposes comment before going prod
         for link in links:
             yield scrapy.Request(
                 url=response.urljoin(link),
@@ -95,8 +95,8 @@ class HarpieSpider(CrawlSpider):
             "timestamp": self.timestamp,
             "job_id": self.job_id,
             "product_name": response.xpath(".//h1/text()").get(),
-            "internal_id": response.xpath(".//div[@class='codi%go-prod']/text()").get(),
-            "pix_price": response.xpath(".//div[@class='preco-pix']/strong/text()").get(),
+            "internal_id": response.xpath(".//div[@class='codigo-prod']/text()").get(),
+            "price": response.xpath(".//div[@class='preco-pix']/strong/text()").get(),
             "gender": response.xpath(".//dt[contains(text(), 'Gênero')]/following-sibling::dd/text()").get(),
             "color": response.xpath(".//dt[contains(text(), 'Cor')]/following-sibling::dd/text()").get(),
             "category": self.extract_category(response)
