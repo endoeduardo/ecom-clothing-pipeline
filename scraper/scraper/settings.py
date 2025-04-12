@@ -52,7 +52,7 @@ ROBOTSTXT_OBEY = True
 # Enable or disable downloader middlewares
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 DOWNLOADER_MIDDLEWARES = {
-   'scrapy_user_agents.middlewares.RandomUserAgentMiddleware': 400,
+   'scrapy_user_agents.middlewares.RandomUserAgentMiddleware': 200,
 }
 
 DOWNLOAD_HANDLERS = {
@@ -64,7 +64,7 @@ TWISTED_REACTOR = "twisted.internet.asyncioreactor.AsyncioSelectorReactor"
 
 PLAYWRIGHT_LAUNCH_OPTIONS = {
    "headless": True,
-} 
+}
 
 
 # Enable or disable extensions
@@ -75,9 +75,13 @@ PLAYWRIGHT_LAUNCH_OPTIONS = {
 
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
-#ITEM_PIPELINES = {
-#    "scraper.pipelines.ScraperPipeline": 300,
-#}
+ITEM_PIPELINES = {
+   "scraper.pipelines.MongoPipeline": 300,
+}
+
+LOG_ENABLED = True  # Enable logging
+LOG_LEVEL = 'INFO'  # Set the log level (DEBUG, INFO, WARNING, ERROR, CRITICAL)
+LOG_FILE = 'scrapy_log.txt'  # Specify the log file where the logs will be saved
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://docs.scrapy.org/en/latest/topics/autothrottle.html
@@ -103,3 +107,7 @@ PLAYWRIGHT_LAUNCH_OPTIONS = {
 # Set settings whose default value is deprecated to a future-proof value
 TWISTED_REACTOR = "twisted.internet.asyncioreactor.AsyncioSelectorReactor"
 FEED_EXPORT_ENCODING = "utf-8"
+
+MONGO_URI = "mongodb://admin:adminpassword@mongodb-container" # For running scrapy on a Docker container instance
+# MONGO_URI = "mongodb://admin:adminpassword@localhost:27017" # For debugging the pipeline running Scrapy
+MONGO_DATABASE = "scrapes"

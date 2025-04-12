@@ -14,7 +14,7 @@ class BluhenCrawler(CrawlSpider):
         super().__init__()
         self.timestamp = timestamp
         self.job_id = job_id
-        self.collection_name = "bluehenCollection"
+        self.collection_name = "bluhenCollection"
 
     def start_requests(self):
         yield scrapy.Request(
