@@ -4,6 +4,7 @@ from scrapy.spiders import CrawlSpider
 from scrapy.http import Response
 from scrapy_playwright.page import PageMethod
 
+from scraper.items import ClothingItem
 
 class BluhenCrawler(CrawlSpider):
     """Spider that crawls the harpie website"""
@@ -13,6 +14,7 @@ class BluhenCrawler(CrawlSpider):
         super().__init__()
         self.timestamp = timestamp
         self.job_id = job_id
+        self.collection_name = "bluehenCollection"
 
     def start_requests(self):
         yield scrapy.Request(
@@ -82,18 +84,23 @@ class BluhenCrawler(CrawlSpider):
                 category = category[-1]
                 return category
             return None
-        except:
+        except TypeError as e:
+            self.logger.error("requesting for %s caused %s", response.url, e, exec_info=True)
             return None
+
             
     def parse_item(self, response: Response):
         """Parse the product item and returns a JSON with the parsing data"""
-        yield {
-            "timestamp": self.timestamp,
-            "job_id": self.job_id,
-            "product_name": response.xpath(".//h1/text()").get(),
-            "internal_id": None,
-            "price": response.xpath(".//div[@class='price-big']/text()").get(),
-            "gender": "Masculino",
-            "color": response.xpath(".//dt[contains(text(), 'Cor')]/following-sibling::dd/text()").get(),
-            "category": self.extract_category(response)
-        }
+        item = ClothingItem()
+
+        item["timestamp"] = self.timestamp
+        item["job_id"] = self.job_id
+        item["site_name"] = self.BASE_URL
+        item["product_name"] = response.xpath(".//h1/text()").get()
+        item["internal_id"] = None
+        item["price"] = response.xpath(".//div[@class='price-big']/text()").get()
+        item["gender"] = "Masculino"
+        item["color"] =  response.xpath(".//dt[contains(text(), 'Cor')]/following-sibling::dd/text()").get()
+        item["category"] = self.extract_category(response)
+
+        yield item
