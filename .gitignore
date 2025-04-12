@@ -1,5 +1,6 @@
 # Test files
 deleteme.json
+scrapy_log.txt
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
