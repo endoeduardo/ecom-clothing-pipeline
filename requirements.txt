@@ -1,0 +1,2 @@
+# Scraper dependecies
+-r scraper/scraper_requirements.txt
